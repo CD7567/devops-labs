@@ -19,7 +19,7 @@ services:
       context: backend
       dockerfile: Dockerfile
       no_cache: true
-    container_name: backend
+    container_name: petls-backend
     restart: on-failure
     networks:
       - petls-internal
