@@ -1,0 +1,19 @@
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mynginx
+    restart: on-failure
+    ports:
+      - "8080:80"
+    volumes:
+      - nginx-static:/usr/share/nginx/html
+
+volumes:
+  nginx-static:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./static
