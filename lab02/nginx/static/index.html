@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register and show pets</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 5px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<h1>Register a pet</h1>
+
+<form id="petForm">
+    <label for="kind">Kind:</label>
+    <input type="text" id="kind" name="kind"><br><br>
+
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name"><br><br>
+
+    <label for="age">Age:</label>
+    <input type="number" id="age" name="age"><br><br>
+
+    <button type="submit">Register</button>
+</form>
+
+<h2>Pet list</h2>
+
+<table id="petTable">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Kind</th>
+        <th>Name</th>
+        <th>Age</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script>
+    async function registerPet(event) {
+        event.preventDefault();
+
+        const kind = document.getElementById("kind").value;
+        const name = document.getElementById("name").value;
+        const age = document.getElementById("age").value;
+
+        const petData = {
+            kind: kind,
+            name: name,
+            age: parseInt(age)
+        };
+
+        try {
+            const response = await fetch("/api/createPet", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(petData)
+            });
+
+            if (response.ok) {
+                alert("Pet registered successfully!");
+                document.getElementById("petForm").reset();
+                await displayPets();
+            } else {
+                alert("Could not register pet: " + response.statusText);
+            }
+        } catch (error) {
+            alert("Network error: " + error);
+        }
+    }
+
+    async function displayPets() {
+        try {
+            const response = await fetch("/api/getPetList");
+            if (response.ok) {
+                const data = await response.json();
+                const tableBody = document.getElementById("petTable").querySelector("tbody");
+                tableBody.innerHTML = "";
+
+                data.result.pets.forEach(pet => {
+                    const row = tableBody.insertRow();
+                    row.insertCell().textContent = pet.id;
+                    row.insertCell().textContent = pet.kind;
+                    row.insertCell().textContent = pet.name;
+                    row.insertCell().textContent = pet.age;
+                });
+            } else {
+                alert("Could not get pet list: " + response.statusText);
+            }
+        } catch (error) {
+            alert("Network error: " + error);
+        }
+    }
+
+    document.getElementById("petForm").addEventListener("submit", registerPet);
+
+    window.onload = displayPets;
+</script>
+</body>
+</html>
