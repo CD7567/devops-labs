@@ -1,0 +1,57 @@
+services:
+  postgres:
+    image: postgres:16.8-alpine3.20
+    container_name: petls-postgres
+    restart: on-failure
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: petls
+      POSTGRES_USER: petls_user
+      POSTGRES_PASSWORD: petls_secret
+    volumes:
+      - petls-postgres-data:/var/lib/postgresql/data
+    networks:
+      - petls-internal
+
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+      no_cache: true
+    container_name: backend
+    restart: on-failure
+    networks:
+      - petls-internal
+      - petls-external
+    depends_on:
+      - postgres
+
+  nginx:
+    build:
+      context: nginx
+      dockerfile: Dockerfile
+    container_name: petls-nginx
+    restart: on-failure
+    ports:
+      - "80:80"
+    volumes:
+      - petls-nginx-static:/usr/share/nginx/html
+    networks:
+      - petls-external
+    depends_on:
+      - backend
+
+
+volumes:
+  petls-postgres-data:
+  petls-nginx-static:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./nginx/static
+
+networks:
+  petls-internal:
+  petls-external:
