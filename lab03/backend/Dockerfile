@@ -1,18 +1,18 @@
-FROM gradle:8.13.0-jdk21-alpine
+FROM gradle:8.12.1-jdk21-graal AS slave
+
+COPY . /build
+WORKDIR /build
+RUN gradle clean nativeCompile
+
+
+FROM alpine:3.21.3
 
 ARG CONTAINER_USER=petls
 
-# Build executable jar
-COPY . /build
-WORKDIR /build
-RUN gradle clean bootJar
+RUN apk add --no-cache gcompat
 
-# Move executable jar to app folder
-RUN mkdir /app && cp /build/build/libs/* /app/
+COPY --from=slave /build/build/native/nativeCompile/ /app/
 WORKDIR /app
-
-# Clear source files
-RUN rm -rf /build
 
 EXPOSE 8080
 
@@ -21,4 +21,4 @@ RUN addgroup -S $CONTAINER_USER && \
 
 USER $CONTAINER_USER
 
-CMD java -jar $(ls)
+CMD ["./petls"]
