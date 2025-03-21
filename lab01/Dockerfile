@@ -4,3 +4,4 @@ LABEL authors="cd7567"
 COPY conf/nginx.conf /etc/nginx/
 
 EXPOSE 80
+VOLUME /usr/share/nginx/html
