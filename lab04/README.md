@@ -23,3 +23,20 @@
 
 
 ### Заметки по решению
+- У приложения нет внешних настроек, только сугубо статические внутренние, поэтому в переменные окружения вынести нечего;
+- `system`
+  - Пакуется в `docker/Dockerfile.system`
+  - Команда запуска
+```shell
+cd docker && docker build -t system:latest -f Dockerfile.system . 
+```
+- `build`
+    - Пакуется в `backend/Dockerfile.build`
+  - Команда запуска
+```shell
+cd backend && docker build -t build:latest -f Dockerfile.build . 
+```
+- `multistage`
+  - Мультистадийная сборка работает в `docker/Dockerfile.multistage`
+  - Запуска достаточно из compose
+  - Не делался отдельный образ под контейнер-раннер, потому что достаточно голого `alpine`
