@@ -1,0 +1,8 @@
+FROM system:latest
+LABEL authors="cd7567"
+
+
+# Transfer sources to builder
+COPY . /build
+WORKDIR /build
+RUN gradle clean nativeCompile
