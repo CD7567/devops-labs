@@ -16,8 +16,8 @@ services:
 
   backend:
     build:
-      context: backend
-      dockerfile: Dockerfile
+      context: docker
+      dockerfile: Dockerfile.multistage
       no_cache: true
     container_name: petls-backend
     restart: on-failure

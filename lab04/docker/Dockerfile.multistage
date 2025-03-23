@@ -1,0 +1,25 @@
+FROM build:latest AS slave
+
+
+FROM alpine:3.21.3
+LABEL authors="cd7567"
+
+# Add username as argument
+ARG CONTAINER_USER=petls
+
+# Transfer binary artifact
+COPY --from=slave /build/build/native/nativeCompile/ /app/
+WORKDIR /app
+
+# Mark backend port 8080 as exposed
+EXPOSE 8080
+
+# Initialize a new user
+RUN addgroup -S $CONTAINER_USER && \
+    adduser -S $CONTAINER_USER -G $CONTAINER_USER petls
+
+# Make run non-privileged
+USER $CONTAINER_USER
+
+# Start backend from binary
+CMD ["./petls"]
