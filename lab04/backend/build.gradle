@@ -1,0 +1,55 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.3'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.graalvm.buildtools.native' version '0.10.3'
+    id 'org.hibernate.orm' version '6.6.8.Final'
+}
+
+group = 'com.cd7567.petls'
+version = '1.0.0'
+
+springBoot {
+    buildInfo()
+}
+
+hibernate {
+    enhancement {
+        lazyInitialization true
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+
+    sourceCompatibility = JavaLanguageVersion.of(21)
+    targetCompatibility = JavaLanguageVersion.of(21)
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+//  Spring boot dependencies
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+// Persistence dependencies
+    implementation 'org.flywaydb:flyway-core:11.0.0'
+    implementation 'org.flywaydb:flyway-database-postgresql:11.0.0'
+
+    runtimeOnly 'org.postgresql:postgresql'
+
+//	Mapping dependencies
+    implementation 'org.mapstruct:mapstruct:1.6.2'
+
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.2'
+
+//	Logging dependencies
+    implementation 'ch.qos.logback:logback-classic:1.5.18'
+}
